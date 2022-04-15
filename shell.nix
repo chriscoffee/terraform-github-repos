@@ -1,26 +1,18 @@
-with import <nixpkg> {};
+with import <nixpkgs> { };
+
 let
-    terraform = terraform.withPlugins(p: with p; [
-        github
-    ]);
+  tf = terraform.withPlugins (p: with p; [ github ]);
 
-    terraform-docs = pkgs.terraform-docs.overrideAttrs (attrs: rec {
-        version = "";
-        owner = "";
-        pname = "";
-        src = pkgs.fetchFromGitHub {
-            inherit owner;
-            repo = pname;
-            rev = "v${version}";
-            sha = "";
-        };
-    });
+  terraform-docs = pkgs.terraform-docs.overrideAttrs (attrs: rec {
+    version = "0.16.0";
+    owner = "terraform-docs";
+    pname = "terraform-docs";
+    src = pkgs.fetchFromGitHub {
+      inherit owner;
+      repo = pname;
+      rev = "v${version}";
+      sha512 = "2k56d7a0fr32cn9fki236k3kj56jz21gn6a1gx1vv63igs1x07iv0lyaz6n8nrh4gl9i4w4s8jlfpy57q1ws6m6w7hjbw7b7369pg5r";
+    };
+  });
 
-in
-mkShell {
-    buildInputs = [
-        terraform
-        terraform-docs
-        nixfmt
-    ];
-};
+in mkShell { buildInputs = [ tf terraform-docs nixfmt ]; }
